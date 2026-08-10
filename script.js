@@ -29,19 +29,24 @@ function renderTasks() {
 
 // Function to add a new task
 function addTask() {
-  const taskText = taskInput.value.trim();
-
-  if (taskText !== "") {
-    tasks.push(taskText);
-    taskInput.value = ""; // Clear input field
-    renderTasks();
-  }
+    const taskText = taskInput.value.trim();
+    if (taskText !== '') {
+        // Save tasks as objects instead of plain text strings
+        tasks.push({ text: taskText, completed: false });
+        taskInput.value = '';
+        renderTasks();
+    }
 }
 
-// Function to delete a task
-window.deleteTask = function (index) {
-  tasks.splice(index, 1);
-  renderTasks();
+window.deleteTask = function(index) {
+    tasks.splice(index, 1);
+    renderTasks();
+};
+
+// New function to toggle complete status
+window.toggleTask = function(index) {
+    tasks[index].completed = !tasks[index].completed;
+    renderTasks();
 };
 
 // Event Listeners
