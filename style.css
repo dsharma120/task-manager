@@ -90,3 +90,9 @@ h2 {
 .delete-btn:hover {
   color: #bd2130;
 }
+.completed {
+    text-decoration: line-through;
+    opacity: 0.6;
+    border-left-color: #28a745 !important; /* Changes blue border to green */
+}
+
