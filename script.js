@@ -8,19 +8,23 @@ let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
 // Function to render tasks to the screen
 function renderTasks() {
-  taskList.innerHTML = "";
+    taskList.innerHTML = '';
 
-  tasks.forEach((task, index) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-            <span>${task}</span>
+    tasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        // If task is an object with 'completed: true', add the CSS class
+        if (task.completed) {
+            li.classList.add('completed');
+        }
+
+        li.innerHTML = `
+            <span onclick="toggleTask(${index})" style="cursor:pointer; flex:1;">${task.text}</span>
             <button class="delete-btn" onclick="deleteTask(${index})">×</button>
         `;
-    taskList.appendChild(li);
-  });
+        taskList.appendChild(li);
+    });
 
-  // Save updated list to localStorage
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+    localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
 // Function to add a new task
