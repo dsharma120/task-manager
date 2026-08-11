@@ -1,66 +1,73 @@
 // DOM Elements
-const taskInput = document.getElementById("task-input");
-const addBtn = document.getElementById("add-btn");
-const taskList = document.getElementById("task-list");
+const taskInput = document.getElementById('task-input');
+const addBtn = document.getElementById('add-btn');
+const taskList = document.getElementById('task-list');
 
 // Load tasks from LocalStorage on startup, or default to an empty array
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
 // Function to render tasks to the screen
 function renderTasks() {
     taskList.innerHTML = '';
+    
+    tasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        
+        // Safety check: Handle both old string data and new object data seamlessly
+        const isCompleted = task && typeof task === 'object' ? task.completed : false;
+        const taskText = task && typeof task === 'object' ? task.text : task;
+        
+        if (isCompleted) {
+            li.classList.add('completed');
+        }
+        
+        li.innerHTML = `
+            <span onclick="toggleTask(${index})" style="cursor:pointer; flex:1;">${taskText}</span>
+            <button class="delete-btn" onclick="deleteTask(${index})">×</button>
+        `;
+        taskList.appendChild(li);
+    });
 
-   tasks.forEach((task, index) => {
-    const li = document.createElement('li');
-    
-    // Safety check: handle old string data or new object data
-    const isCompleted = task.completed || false;
-    const taskText = typeof task === 'object' ? task.text : task;
-    
-    if (isCompleted) {
-        li.classList.add('completed');
-    }
-    
-    li.innerHTML = `
-        <span onclick="toggleTask(${index})" style="cursor:pointer; flex:1;">${taskText}</span>
-        <button class="delete-btn" onclick="deleteTask(${index})">×</button>
-    `;
-    taskList.appendChild(li);
-});
-
+    // Save updated list to localStorage
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
 // Function to add a new task
 function addTask() {
     const taskText = taskInput.value.trim();
+    
     if (taskText !== '') {
-        // Save tasks as objects instead of plain text strings
+        // Save tasks as objects to track completion status
         tasks.push({ text: taskText, completed: false });
-        taskInput.value = '';
+        taskInput.value = ''; // Clear input field
         renderTasks();
     }
 }
 
+// Function to delete a task
 window.deleteTask = function(index) {
     tasks.splice(index, 1);
     renderTasks();
 };
 
-// New function to toggle complete status
+// Function to toggle complete status (strike-through)
 window.toggleTask = function(index) {
+    // If the old data was a string, convert it to an object first
+    if (typeof tasks[index] !== 'object') {
+        tasks[index] = { text: tasks[index], completed: false };
+    }
     tasks[index].completed = !tasks[index].completed;
     renderTasks();
 };
 
 // Event Listeners
-addBtn.addEventListener("click", addTask);
+addBtn.addEventListener('click', addTask);
 
 // Allow pressing "Enter" key to add a task
-taskInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    addTask();
-  }
+taskInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        addTask();
+    }
 });
 
 // Initial render when the page loads
