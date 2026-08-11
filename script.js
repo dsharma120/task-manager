@@ -10,19 +10,23 @@ let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 function renderTasks() {
     taskList.innerHTML = '';
 
-    tasks.forEach((task, index) => {
-        const li = document.createElement('li');
-        // If task is an object with 'completed: true', add the CSS class
-        if (task.completed) {
-            li.classList.add('completed');
-        }
-
-        li.innerHTML = `
-            <span onclick="toggleTask(${index})" style="cursor:pointer; flex:1;">${task.text}</span>
-            <button class="delete-btn" onclick="deleteTask(${index})">×</button>
-        `;
-        taskList.appendChild(li);
-    });
+   tasks.forEach((task, index) => {
+    const li = document.createElement('li');
+    
+    // Safety check: handle old string data or new object data
+    const isCompleted = task.completed || false;
+    const taskText = typeof task === 'object' ? task.text : task;
+    
+    if (isCompleted) {
+        li.classList.add('completed');
+    }
+    
+    li.innerHTML = `
+        <span onclick="toggleTask(${index})" style="cursor:pointer; flex:1;">${taskText}</span>
+        <button class="delete-btn" onclick="deleteTask(${index})">×</button>
+    `;
+    taskList.appendChild(li);
+});
 
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
